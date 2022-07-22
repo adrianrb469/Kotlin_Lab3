@@ -136,66 +136,32 @@ data class ItemData(
 // -----------------------
 
 fun processList(inputList: List<Any?>?): List<ItemData>? {
-
-    if (inputList == null){
-        return null
-    }
-    //
-    var index = 0
-    var processedList : ArrayList<ItemData> = ArrayList<ItemData>()
-
-    var originalPos: Int
-    var originalValue: Any?
-    var type: String? = null
-    var info: String? = null
-
-    for (value in inputList.orEmpty()) {
-            //test
-            if (value != null){
-                originalPos = index
-                originalValue = value
-                when (value) {
+    val processedList: ArrayList<ItemData> = ArrayList<ItemData>()
+    inputList?.let {
+        for ((index,value) in inputList.withIndex()) {
+            value?.let {
+                val newItem: ItemData = when (value) {
                     is String -> {
-                        type = "cadena"
-                        info = "l"+value.length
+                        ItemData(index, value, "cadena", "l" + value.length)
                     }
                     is Int -> {
-                        type = "entero"
-
-                        if ((value % 10) == 0){
-                            info = "m10"
-                        }
-                        else if ((value% 5) == 0){
-                            info = "m5"
-                        }
-                        else if ((value% 2) == 0){
-                            info = "m2"
-                        }
-                        else{
-                            info = null
-                        }
-
+                        ItemData(index, value, "entero", if ((value%10)==0) "m10" else if ((value%5)==0) "m5" else if ((value%2)==0) "m2" else null)
                     }
                     is Boolean -> {
-                        type = "booleano"
-                        if (value == false) {
-                            info="falso"
-                        }
-                        else{
-                            info = "verdadero"
-                        }
+                        ItemData(index, value, "booleano", if (value) "verdadero" else "falso")
                     }
                     else -> {
-                        type = null
-                        info = null
+                        ItemData(index, value, null, null)
                     }
                 }
-                val newItem = ItemData(originalPos,originalValue,type,info)
                 processedList.add(newItem)
-
             }
-            index++
-
         }
         return processedList
+    }
+    return null
+
 }
+
+
+
